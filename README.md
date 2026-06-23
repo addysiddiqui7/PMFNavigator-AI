@@ -219,42 +219,34 @@ Assesses reliability based on evidence density:
 
 Ensure you have configured `GEMINI_API_KEY` either in your Kaggle Secrets (when running on Kaggle) or in a local `.env` file in the workspace root. Execute the pipeline using the following terminal syntaxes:
 
-### 1. Fast Mode (Without CSV - Web Only)
+### 1. Web-Only Mode (Default - No Local Data)
+Automatically proceeds with DuckDuckGo web scraping without using any local data.
 ```powershell
-python main.py --query "Topic Description" --csv none --mode fast
+# Fast Mode
+python main.py --query "Topic Description" --mode fast
+
+# Deep Research Mode
+python main.py --query "Topic Description" --mode deep
 ```
 
-### 2. Fast Mode (With CSV - Hybrid)
+### 2. Hybrid Mode (With Local Data / Documents)
+Ingests local datasets or documents (supports `.csv`, `.xlsx`, `.pdf`, `.docx` files, or a folder containing multiple supported documents).
 ```powershell
-python main.py --query "Topic Description" --csv "your_dataset.csv" --mode fast
-```
+# Fast Mode
+python main.py --query "Topic Description" --data "path/to/document_or_folder" --mode fast
 
-### 3. Fast Mode (With CSV Folder - Ingest Multiple Datasets)
-```powershell
-python main.py --query "Topic Description" --csv "path/to/folder_with_csvs" --mode fast
+# Deep Research Mode
+python main.py --query "Topic Description" --data "path/to/document_or_folder" --mode deep
 ```
+*(Note: `--csv` is kept as a backward-compatible alias for `--data`.)*
 
-### 4. Deep Research Mode (Without CSV - Web Only)
-```powershell
-python main.py --query "Topic Description" --csv none --mode deep
-```
-
-### 5. Deep Research Mode (With CSV - Hybrid)
-```powershell
-python main.py --query "Topic Description" --csv "your_dataset.csv" --mode deep
-```
-
-### 6. Deep Research Mode (With CSV Folder - Ingest Multiple Datasets)
-```powershell
-python main.py --query "Topic Description" --csv "path/to/folder_with_csvs" --mode deep
-```
 
 ---
 
 ## 17. System Contributors & Tech Stack
 
 ### Contributors
-*   **Adeel Siddique (Mastermind)**: Lead Architect & Vibe Coder. Designed the workflow, sequential agent framework, backoff loops, and scraping logic.
+*   **Adeel Siddique (Mastermind)**: Lead Architect & Developer. Designed the workflow, sequential agent framework, backoff loops, and scraping logic.
 *   **Antigravity Coding Assistant (Gemini 3.5 Flash)**: AI pairing partner for code updates, testing, and documentation.
 
 ### Tech Stack
