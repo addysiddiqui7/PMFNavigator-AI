@@ -1,4 +1,4 @@
-# Multi-Agent Product-Market Fit (PMF) Research System
+# PMFNavigator AI : A Multi-Agent Product-Market Fit (PMF) Research System
 **Final Project Documentation & Kaggle Capstone Submission Dossier**
 
 ---
@@ -47,13 +47,13 @@ graph TD
     
     %% Input Sources Branch
     Data["Internal Data: File or Folder Ingestion (.csv, .xlsx, .pdf, .docx)"] -->|Parsed by DocumentIngestionTool| Stage2
-    Search["DuckDuckGo Web Search"] -->|Search Grounding| Stage2
     
-    %% Search Modes Branch
-    Search --> Fast["Fast Mode (1-way query)"]
-    Search --> Deep["Deep Mode (3-way queries)"]
-    Fast --> Stage2
-    Deep --> Stage2
+    %% Search Modes Branch (determined by mode CLI argument)
+    ModeSelect{Select Research Mode} -->|Fast Mode| Fast["DuckDuckGo: 1-way query"]
+    ModeSelect -->|Deep Mode| Deep["DuckDuckGo: 3-way queries"]
+    
+    Fast -->|Web Grounding Context| Stage2
+    Deep -->|Web Grounding Context| Stage2
     
     %% Research & Extraction
     Stage2 -->|Raw Dossier & Metadata| Stage3[3. Customer Voice Agent]
