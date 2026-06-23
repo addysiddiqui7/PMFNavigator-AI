@@ -113,134 +113,105 @@ Coupled with custom retry handlers and zero-cost Python-native DuckDuckGo search
 ## 7. Problem Statement & Business Value
 
 ### Problem Statement
-Market research and sentiment analysis are highly time-consuming, costly, and subjective. Teams manually parse thousands of forum discussions, reviews, and competitor signals. This gathered data is often unstructured, leading to qualitative bias and unrecognized market gaps.
+Traditional market research is slow, costly, and subjective. Teams manually parse thousands of unstructured forum discussions and competitor reviews, leading to qualitative bias and unrecognized market gaps.
 
 ### Business Value
-*   **Massive Time Savings**: Compresses 15–20 hours of manual collation and mapping into a structured report in under 3 minutes.
-*   **Extreme Cost Reduction**: Replaces expensive subscriptions to market intelligence platforms with a pipeline operating at zero marginal cost.
-*   **Rigorous Decision-Making**: Quantifies customer sentiment into an explainable PMF score, enabling data-backed roadmap decisions before committing capital.
+*   **Time Efficiency**: Compresses 15–20 hours of manual research and data mapping into a structured report in under 3 minutes.
+*   **Zero Marginal Cost**: Replaces premium market intelligence subscriptions using free-tier LLMs and public search scrapers.
+*   **Data-Driven Decisions**: Quantifies customer sentiment into an explainable PMF score, reducing capital risk before MVP development.
 
 ### Target Users
-*   **Startups & Founders**: Validate concept feasibility and demand before building MVPs.
-*   **Product Managers**: Map complaints and prioritize roadmaps with structured data.
-*   **Market Researchers**: Extract sentiment and competitor gaps from unstructured data.
-*   **Strategy Consultants**: Compile SWOT matrices and GTM roadmaps for client decks.
-*   **Small Businesses**: Understand market trends and pain points without agencies.
+*   **Founders & Product Managers**: Validate demand, uncover feature gaps, and prioritize product roadmaps.
+*   **Analysts & Consultants**: Automate sentiment extraction and compile SWOT matrices for strategic planning.
 
 ---
 
-## 8. The DuckDuckGo (DDG) Web Scraping Engine
+## 8. Zero-Cost DuckDuckGo Search Engine
 
-A key highlight of this system is its **zero-cost search scraping engine**, which bypasses expensive search APIs (such as Google Custom Search API) that impose query limits.
+This system uses a custom Python-native DuckDuckGo scraper to bypass expensive, rate-limited search APIs.
 
-### How It Works:
-*   **Search Scraper**: Uses a Python-native DuckDuckGo search parser. **Fast Mode** runs a single query; **Deep Mode** runs 3 sequential queries targeting public forums, technical reviews, and buyer satisfaction.
-*   **Zero-Cost Grounding**: By injecting 5 text snippets per query into the Gemini context, the model achieves real-time grounded reasoning without paid API keys.
-*   **Rate-Limit Bypass**: Bypasses Google search grounding limits on the free-tier Gemini API, keeping execution free.
-
----
-
-## 9. The SWOT Analysis Agent Matrix
-
-The **SWOT Analysis Agent** bridges raw analysis and business execution by synthesizing upstream customer, gap, and PMF data into an executive-ready SWOT Matrix.
-
-### SWOT Matrix Structure:
-*   **Strengths (S)**: Internal product values, highly rated customer features, and organic brand loyalty drivers.
-*   **Weaknesses (W)**: Product deficiencies, connection failures, design defects, and customer frustrations.
-*   **Opportunities (O)**: Unmet market demands, rival weaknesses, and new R&D technologies.
-*   **Threats (T)**: Competitor lock-in, regulatory compliance caps (e.g. UL/TÜV), subscription models backlash, and pricing pressures.
-
-### Strategic Synthesis:
-Rather than just listing items in tables, the SWOT agent constructs a **SO/WO/ST/WT Action Matrix** which maps external signals directly to internal actions:
-*   **SO Strategies**: Using internal Strengths to capture external Opportunities (e.g., launching campaigns highlighting real-world range capabilities).
-*   **WO Strategies**: Correcting internal Weaknesses by leveraging external Opportunities (e.g., introducing offline-first Bluetooth access to fix app lockouts).
-*   **ST Strategies**: Utilizing internal Strengths to defend against external Threats.
-*   **WT Strategies**: Formulating defensive tactics to minimize Weaknesses and avoid Threats.
+*   **Scraping Logic**: Fast Mode runs 1 general query; Deep Mode runs 3 targeted sequential queries targeting reviews, forums, and customer satisfaction.
+*   **Snippet Grounding**: Extracts and feeds 5 key text snippets per query into the LLM context for real-time grounded reasoning.
+*   **Zero-Cost Execution**: Avoids Gemini API search grounding limits and paid search provider fees.
 
 ---
 
-## 10. Dynamic Output File Exporter (Dynamic Naming)
+## 9. SWOT Analysis Agent Matrix
 
-To prevent file conflicts and retain historical runs, the system exports dynamically named reports.
+The SWOT Agent synthesizes preceding analysis into a strategic matrix and action roadmap:
+*   **Core Pillars**: Identifies internal Strengths/Weaknesses (loyalty drivers, defects) and external Opportunities/Threats (market gaps, competitor lock-in).
+*   **SO/WO/ST/WT Action Matrix**: Connects capabilities to market signals (e.g., mitigating a connection Weakness using a BLE access Opportunity) to map concrete next steps.
 
-### Key Mechanics:
-*   **Slugified Naming**: The `BriefingAgent` generates a clean, lowercase snake_case topic slug from the query (e.g. `electric_scooters_commuting`).
-*   **Timestamp Injection**: At runtime, `main.py` fetches the current system date and time, formatting it into `YYYY-MM-DD_HH-MM-SS`.
-*   **Safe File Output**: Saves reports as `{topic_slug}_market_research_report_{timestamp}.md`, allowing users to compare Fast and Deep mode iterations side-by-side without file overwrites.
+---
+
+## 10. Dynamic Output File Exporter
+
+To prevent overwrites and track historical runs, reports are saved dynamically:
+*   **Slugified Naming**: Converts the topic query into a clean snake_case slug (e.g., `electric_scooters_commuting`).
+*   **Timestamping**: Appends the system execution date and time (`YYYY-MM-DD_HH-MM-SS`).
+*   **Export Format**: Outputs files as `{topic_slug}_market_research_report_{timestamp}.md` for side-by-side comparison of results.
 
 ---
 
 ## 11. Fast Mode vs. Deep Research Mode
 
-To optimize execution speed and API limits, the system provides two distinct modes:
-
-| Feature / Dimension | Fast Mode | Deep Research Mode |
+| Metric | Fast Mode | Deep Research Mode |
 | :--- | :--- | :--- |
-| **Search Strategy** | 1 single, comprehensive search query | 3 targeted, sequential search queries |
-| **Data Focus** | High-level market trends & core competitor signals | Deep-dive customer complaints, technical reviews, and satisfaction metrics |
-| **Execution Time** | ~30 seconds | ~2 to 3 minutes (incorporates rate-limit padding) |
-| **API Load** | Low (ideal for rapid ideation) | Medium (optimized to prevent 429 quota exhaustion) |
-| **Best Used For** | Initial screening of multiple ideas | Deep validation of selected product strategies |
+| **Search Strategy** | 1 general query | 3 targeted sequential queries |
+| **Data Focus** | High-level market trends | Deep-dive reviews & complaints |
+| **Execution Time** | ~30 seconds | ~2-3 minutes (with quota padding) |
+| **Best For** | Initial concept screening | In-depth product-market validation |
 
 ---
 
 ## 12. Data Sources & Hybrid Ingestion
 
-### Data Input Configurations
-1.  **Search Grounding Only**: When no CSV path is provided, the system performs web scraping to evaluate public discussions, reviews, and professional analyses.
-2.  **CSV Local Analysis**: Directly evaluates user-provided CSV files containing customer support tickets or app-store feedback.
-3.  **Hybrid Mode**: Concurrently evaluates local CSV datasets alongside external web scraping results to cross-examine internal telemetry against competitor sentiment.
-4.  **Folder Ingestion Feature**: If a directory path containing multiple CSV files is provided to `--csv`, the `CSVReaderTool` automatically scans, parses, and summarizes each dataset individually, merging the insights and reflecting the exact source count inside the final report metadata.
+The system supports four main data configurations:
+*   **Search Grounding**: DuckDuckGo web scraping of public reviews and expert analyses.
+*   **CSV Analysis**: Local ingestion of customer feedback datasets.
+*   **Hybrid Mode**: Cross-references local CSV telemetry against public web signals to reveal market blind spots.
+*   **Folder Ingestion**: Automatically merges and parses all CSV files in a target directory, counting source density in the final report.
 
 ---
 
 ## 13. PMF Methodology & Scoring Framework
 
-### Scoring Calculations
-The **PMF Score** is calculated as the average of four key measurable factors, graded on a 1-to-10 scale and normalized to 0-100:
+### Scoring Formula
+The PMF score is the normalized average of four key dimensions graded from 1 to 10:
 
 $$\text{PMF Score} = \left( \frac{\text{Demand Strength} + \text{Pain Severity} + \text{Competition Gap} + \text{Adoption Potential}}{4} \right) \times 10$$
 
-*   **Demand Strength (1-10)**: Quantitative interest, transaction volume, and search trends indicating buying intent.
-*   **Pain Severity (1-10)**: The intensity of customer frustration. High scores indicate users are desperate for a solution.
-*   **Competition Gap (1-10)**: The degree to which rivals are ignoring the pain points or failing to resolve them.
-*   **Adoption Potential (1-10)**: The ease of user integration, evaluating setup friction, cost, and usability barriers.
+*   **Dimensions**: *Demand Strength* (intent), *Pain Severity* (frustration), *Competition Gap* (market neglect), and *Adoption Potential* (usability/cost barriers).
 
-### Evidence-Based Confidence Metrics
-The system assesses data reliability by reporting:
-*   **Number of Sources Analyzed**: Direct count of distinct web URLs scraped and CSV files parsed (supporting folder-based counts).
-*   **Number of Customer Themes Identified**: Count of unique issues categories successfully extracted.
-*   **Confidence Score & Level**: Out of 100, graded (Low/Medium/High) based on source density, theme consistency, and signal clarity.
+### Confidence Metrics
+Assesses reliability based on evidence density:
+*   **Sources & Themes**: Tracks the number of URLs scraped, CSVs loaded, and distinct feedback themes extracted.
+*   **Confidence Score**: Rated 0-100 (Low/Medium/High) based on data volume and signal consistency.
 
 ---
 
 ## 14. Key Differentiators & Ethical Design
 
-### Key Differentiators
-*   **Dual Research Modes**: Switch between fast screening and deep-dive validation with a command-line flag.
-*   **Zero-Cost Architecture**: Uses free-tier Gemini API keys and native DDG search scraping, avoiding paid custom search APIs.
-*   **Production Resilience**: Employs custom retry handlers inside the base agent, catching Gemini 429 quota exceptions and sleeping dynamically to ensure pipeline completion.
-*   **Dynamic Document Exporter**: Autogenerates markdown files appended with topic slugs and timestamps to guarantee no overwrites.
+### Core Differentiators
+*   **Zero-Cost & Robust**: Bypasses paid search APIs and handles Gemini 429 rate limits via backoff sleep loops.
+*   **CLI Flexibility**: Easily toggles between Fast/Deep modes and handles dynamic timestamped exports.
 
-### Ethical Considerations & Safety
-*   **Public Information Grounding**: Scrapes only public indexes and community boards.
-*   **No Authentication Wall-Jumping**: Does not scrape password-protected accounts, private repositories, or pages behind login walls.
-*   **No PII Collection**: Sanitizes inputs to filter out personally identifiable information, protecting user privacy.
-*   **Local File Sandbox**: Restricts file execution and reads to the user's workspace, maintaining file security.
+### Ethics & Safety
+*   **Compliance**: Scrapes only public, non-paywalled community data.
+*   **Privacy & Security**: Sanitizes PII and restricts file operations strictly to the sandboxed workspace.
 
 ---
 
 ## 15. Limitations & Future Roadmap
 
-### System Limitations
-*   **Public Data Dependency**: Dependent on search index depth. Very niche B2B queries with sparse public discussion can result in lower confidence ratings.
-*   **Analytical Estimates**: Generated scores are directional statistical summaries rather than absolute financial proof.
-*   **Human Verification Required**: Designed for decision-support; critical investments require standard human due diligence.
+### Limitations
+*   **Data Dependencies**: Niche B2B topics with low public indexing generate lower confidence scores.
+*   **Decision Support Only**: PMF scores are qualitative indicators rather than quantitative financial validation.
 
-### Future Roadmap
-1.  **Competitor Feature Benchmarking**: Add a scraper to extract competitor landing pages and generate side-by-side feature matrix comparisons.
-2.  **Visual Dashboard Exporter**: Create a companion dashboard using Streamlit to visualize sentiment distribution, SWOT quadrants, and PMF score changes over time.
-3.  **Advanced API Connectors**: Integrate direct connectors for Slack, Zendesk, App Store, and Google Play API endpoints.
+### Roadmap
+*   **Competitor Benchmarking**: Automated feature-by-feature matrix extraction.
+*   **UI Dashboard**: A Streamlit interface for interactive analysis.
+*   **API Integrations**: Connect direct ingestion pipelines for Zendesk, App Store, and Slack reviews.
 
 ---
 
@@ -282,12 +253,11 @@ python main.py --query "Topic Description" --csv "path/to/folder_with_csvs" --mo
 
 ## 17. System Contributors & Tech Stack
 
-### Core Contributors & Mastermind
-*   **Adeel Siddique (Mastermind)**: Lead Architect, Mastermind, & Developer. Designed the system workflow, configured the sequential agent framework, implemented the custom backoff rate-limit recovery loops, and established zero-cost scraping capabilities.
-*   **Antigravity Coding Assistant (Gemini 3.5 Flash)**: Collaborative AI pairing partner, driving system code updates, terminal tests, file inspections, and system documentation.
+### Contributors
+*   **Adeel Siddique (Mastermind)**: Lead Architect & Vibe Coder. Designed the workflow, sequential agent framework, backoff loops, and scraping logic.
+*   **Antigravity Coding Assistant (Gemini 3.5 Flash)**: AI pairing partner for code updates, testing, and documentation.
 
-### Technology Stack & Services
-*   **Google Gemini API (`gemini-flash-latest`)**: The foundational LLM reasoning core driving all 9 specialized agents under a highly scalable 1,500 RPD free tier.
-*   **Google AI Studio / Google AI Pro**: Powers the underlying pairing chat inside Antigravity, providing non-stop developer assistant capabilities.
-*   **DuckDuckGo search scraper**: Scrapes public indexes natively, bypassing third-party API keys.
-*   **Python Orchestration**: Constructed utilizing `google-generativeai` client SDK, `pandas` (local tabular parsing), `python-dotenv` (secure credentials sandbox), and `rich` (terminal reporting).
+### Tech Stack
+*   **LLM Core**: Google Gemini API (`gemini-flash-latest`) driving reasoning agents via a 1,500 RPD free tier.
+*   **Search**: Python-native DuckDuckGo scraper (bypasses third-party search API keys).
+*   **Libraries**: `google-generativeai`, `pandas` (CSV handling), `python-dotenv` (config), and `rich` (UI formatting).
