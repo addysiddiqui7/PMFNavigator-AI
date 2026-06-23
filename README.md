@@ -1,4 +1,4 @@
-# PMFNavigator AI : A Multi-Agent Product-Market Fit (PMF) Research System
+# Multi-Agent Product-Market Fit (PMF) Research System
 **Final Project Documentation & Kaggle Capstone Submission Dossier**
 
 ---
@@ -43,17 +43,18 @@ The system orchestrates a sequential pipeline of 9 specialized agents. Each agen
 ```mermaid
 graph TD
     Input[Topic Query] --> Stage1[1. Briefing Agent]
-    Stage1 -->|Research Brief & slugified topic| Stage2[2. Research Agent]
+    Stage1 -->|Research Brief & slugified topic| ModeSelect{Select Research Mode}
     
-    %% Input Sources Branch
-    Data["Internal Data: File or Folder Ingestion (.csv, .xlsx, .pdf, .docx)"] -->|Parsed by DocumentIngestionTool| Stage2
+    %% Input Sources Branch (Ingests 4 possible data configurations)
+    Data["Internal Data Ingestion (.csv, .xlsx, .pdf, .docx)"] -->|Parsed by DocumentIngestionTool| ModeSelect
     
-    %% Search Modes Branch (determined by mode CLI argument)
-    ModeSelect{Select Research Mode} -->|Fast Mode| Fast["DuckDuckGo: 1-way query"]
-    ModeSelect -->|Deep Mode| Deep["DuckDuckGo: 3-way queries"]
+    %% Search Modes Branch (2 research modes: Fast vs. Deep)
+    ModeSelect -->|Fast Mode| Fast["Fast Mode: Data Ingestion + 1-way Web Search"]
+    ModeSelect -->|Deep Mode| Deep["Deep Mode: Data Ingestion + 3-way Web Search"]
     
-    Fast -->|Web Grounding Context| Stage2
-    Deep -->|Web Grounding Context| Stage2
+    %% Target Node: 1 Research Agent
+    Fast -->|Grounded Context| Stage2[2. Research Agent]
+    Deep -->|Grounded Context| Stage2
     
     %% Research & Extraction
     Stage2 -->|Raw Dossier & Metadata| Stage3[3. Customer Voice Agent]
