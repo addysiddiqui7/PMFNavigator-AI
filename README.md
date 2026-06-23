@@ -5,7 +5,7 @@
 
 ## 1. Introduction
 
-The **Multi-Agent Product-Market Fit (PMF) Research System** is an advanced, production-grade LLM pipeline designed to automate early-stage market validation and customer sentiment analysis. Operating on Google's free-tier `gemini-flash-latest` (Gemini 1.5 Flash) engine, a team of 9 specialized, role-playing agents aggregates web-search signals (via DuckDuckGo) and customer datasets (via single or folder-based CSV files) to identify market gaps, evaluate consumer emotions, compile SWOT matrices, and formulate concrete business strategies. By translating qualitative feedback into structured PMF and confidence scores, the system completes complex research workflows in minutes, allowing startups and product teams to de-risk investments with high precision.
+The **Multi-Agent Product-Market Fit (PMF) Research System** is an advanced, production-grade LLM pipeline designed to automate early-stage market validation and customer sentiment analysis. Operating on Google's free-tier `gemini-flash-latest` (Gemini 1.5 Flash) engine, a team of 9 specialized, role-playing agents aggregates web-search signals (via DuckDuckGo) and internal customer datasets (via single files or folder-based CSV, Excel, PDF, or Word documents) to identify market gaps, evaluate consumer emotions, compile SWOT matrices, and formulate concrete business strategies. By translating qualitative feedback into structured PMF and confidence scores, the system completes complex research workflows in minutes, allowing startups and product teams to de-risk investments with high precision.
 
 ---
 
@@ -13,13 +13,13 @@ The **Multi-Agent Product-Market Fit (PMF) Research System** is an advanced, pro
 
 *   **9 Specialized AI Agents**: A coordinated team of sequential agents processing data from briefing to final executive report.
 *   **Fast & Deep Research Modes**: Switch between rapid 1-query screening and deep-dive 3-query multi-angle scraping.
-*   **Hybrid CSV + Web Analysis**: Cross-reference internal user reviews against public competitor web signals.
-*   **Folder Ingestion**: Automatically scan, parse, and merge multiple CSV datasets from a target folder.
+*   **Hybrid Internal Data + Web Analysis**: Cross-reference internal feedback documents against public competitor web signals.
+*   **Folder Ingestion**: Automatically scan, parse, and merge multiple document datasets (CSV, Excel, PDF, Word) from a target folder.
 *   **PMF Scoring**: Quantitative grading of Concept-Market fit utilizing a robust four-factor mathematical scoring model.
 *   **Confidence Metrics**: Evidence-based grading tracking source density, customer theme volume, and signal consistency.
 *   **SWOT Analysis**: Complete strategic SWOT matrix outputting targeted SO/WO/ST/WT action roadmaps.
 *   **Strategic Recommendations**: Separation of priorities into short-term wins vs. long-term roadmaps, and incremental upgrades vs. R&D innovations.
-*   **Markdown Report Generation**: Publication-ready, professionally styled reports saved dynamically with runtime timestamps.
+*   **Markdown Report Generation**: Publication-ready, professionally styled reports saved dynamically inside the `reports/` directory.
 *   **Zero-Cost Search Pipeline**: Python-native DuckDuckGo search integration that bypasses paid search API key limits.
 
 ---
@@ -46,7 +46,7 @@ graph TD
     Stage1 -->|Research Brief & slugified topic| Stage2[2. Research Agent]
     
     %% Input Sources Branch
-    CSV["Local CSV Data: Single or Folder Ingestion"] -->|Ingested & parsed by CSVReaderTool| Stage2
+    Data["Internal Data: File or Folder Ingestion (.csv, .xlsx, .pdf, .docx)"] -->|Parsed by DocumentIngestionTool| Stage2
     Search["DuckDuckGo Web Search"] -->|Search Grounding| Stage2
     
     %% Search Modes Branch
@@ -97,7 +97,7 @@ When evaluated on the topic *"Electric scooters for urban commuting"* in Deep Mo
 ## 6. Executive Summary & Kaggle Submission
 
 ### One-Paragraph Executive Summary
-The **Multi-Agent Product-Market Fit (PMF) Research System** is an advanced, production-grade LLM pipeline designed to automate early-stage market validation and sentiment analysis. Running on Google's free-tier `gemini-flash-latest` (Gemini 1.5 Flash) engine, a team of 9 role-playing agents aggregates web-search signals (via DuckDuckGo) and customer feedback (via CSV files) to identify market gaps, evaluate consumer emotions, construct SWOT matrices, and formulate business strategies. By translating qualitative feedback into structured PMF and confidence scores, the system completes complex research workflows in minutes, allowing startups to de-risk investments and pivot with high precision.
+The **Multi-Agent Product-Market Fit (PMF) Research System** is an advanced, production-grade LLM pipeline designed to automate early-stage market validation and sentiment analysis. Running on Google's free-tier `gemini-flash-latest` (Gemini 1.5 Flash) engine, a team of 9 role-playing agents aggregates web-search signals (via DuckDuckGo) and internal customer datasets (via CSV, Excel, PDF, or Word files) to identify market gaps, evaluate consumer emotions, construct SWOT matrices, and formulate business strategies. By translating qualitative feedback into structured PMF and confidence scores, the system completes complex research workflows in minutes, allowing startups to de-risk investments and pivot with high precision.
 
 ### "Why This Project Stands Out" (Core Reasoning & Model Selection)
 Operating complex agent pipelines on a budget requires careful model selection. While newer iterations like Gemini 2.5/3.5 Flash were evaluated, they are subject to a strict free-tier limit of **20 Requests Per Day (RPD)**, which our 9-agent pipeline quickly exhausts. 
@@ -149,7 +149,7 @@ The SWOT Agent synthesizes preceding analysis into a strategic matrix and action
 To prevent overwrites and track historical runs, reports are saved dynamically:
 *   **Slugified Naming**: Converts the topic query into a clean snake_case slug (e.g., `electric_scooters_commuting`).
 *   **Timestamping**: Appends the system execution date and time (`YYYY-MM-DD_HH-MM-SS`).
-*   **Export Format**: Outputs files as `{topic_slug}_market_research_report_{timestamp}.md` for side-by-side comparison of results.
+*   **Export Format**: Outputs files inside the `reports/` folder as `{topic_slug}_market_research_report_{timestamp}.md` for side-by-side comparison of results.
 
 ---
 
@@ -168,9 +168,9 @@ To prevent overwrites and track historical runs, reports are saved dynamically:
 
 The system supports four main data configurations:
 *   **Search Grounding**: DuckDuckGo web scraping of public reviews and expert analyses.
-*   **CSV Analysis**: Local ingestion of customer feedback datasets.
-*   **Hybrid Mode**: Cross-references local CSV telemetry against public web signals to reveal market blind spots.
-*   **Folder Ingestion**: Automatically merges and parses all CSV files in a target directory, counting source density in the final report.
+*   **Internal Data Ingestion**: Local parsing of customer reviews, survey spreadsheets, PDF manuals, or Word files.
+*   **Hybrid Mode**: Cross-references internal datasets against public web signals to reveal competitor blind spots.
+*   **Folder Ingestion**: Automatically scans, parses, and merges all supported files in a target directory (individually by name or in bulk), listing source counts in the final report metadata.
 
 ---
 
@@ -185,7 +185,7 @@ $$\text{PMF Score} = \left( \frac{\text{Demand Strength} + \text{Pain Severity} 
 
 ### Confidence Metrics
 Assesses reliability based on evidence density:
-*   **Sources & Themes**: Tracks the number of URLs scraped, CSVs loaded, and distinct feedback themes extracted.
+*   **Sources & Themes**: Tracks the number of URLs scraped, files loaded, and distinct feedback themes extracted.
 *   **Confidence Score**: Rated 0-100 (Low/Medium/High) based on data volume and signal consistency.
 
 ---
@@ -232,14 +232,13 @@ python main.py --query "Topic Description" --mode deep
 ### 2. Hybrid Mode (With Local Data / Documents)
 Ingests local datasets or documents (supports `.csv`, `.xlsx`, `.pdf`, `.docx` files, or a folder containing multiple supported documents).
 ```powershell
-# Fast Mode
+# Fast Mode (runs specific data file by its name or an entire directory path)
 python main.py --query "Topic Description" --data "path/to/document_or_folder" --mode fast
 
 # Deep Research Mode
 python main.py --query "Topic Description" --data "path/to/document_or_folder" --mode deep
 ```
 *(Note: `--csv` is kept as a backward-compatible alias for `--data`.)*
-
 
 ---
 
@@ -252,4 +251,4 @@ python main.py --query "Topic Description" --data "path/to/document_or_folder" -
 ### Tech Stack
 *   **LLM Core**: Google Gemini API (`gemini-flash-latest`) driving reasoning agents via a 1,500 RPD free tier.
 *   **Search**: Python-native DuckDuckGo scraper (bypasses third-party search API keys).
-*   **Libraries**: `google-generativeai`, `pandas` (CSV handling), `python-dotenv` (config), and `rich` (UI formatting).
+*   **Libraries**: `google-generativeai`, `pandas` (tabular data parsing), `pypdf` (PDF text extraction), `openpyxl` (Excel sheet processing), `python-dotenv` (config), and `rich` (UI formatting).
