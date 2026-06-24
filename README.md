@@ -44,23 +44,26 @@ The system orchestrates a sequential pipeline of 9 specialized agents. Each agen
 graph TD
     %% Inputs and Stage 1
     Input[Topic Query] --> Stage1[1. Briefing Agent]
-    
-    %% Stage 2 Inputs
+
+    subgraph Hybrid_Inputs [Hybrid Information Gathering]
+        direction LR
+        LocalData["Optional Local Data Feed<br>(CSV, XLSX, PDF, DOCX)"]
+        
+        %% Internet Web Search Path
+        ModeSelect{Select Web Search Mode<br>(Internet)}
+        ModeSelect -->|Fast Mode| FastSearch["DuckDuckGo Web Search<br>(1x Comprehensive Query)"]
+        ModeSelect -->|Deep Mode| DeepSearch["DuckDuckGo Web Search<br>(3x Targeted Queries)"]
+    end
+
     Stage1 -->|Research Brief & Guidelines| Stage2[2. Research Agent]
+    Stage1 -->|Topic Title| ModeSelect
     
-    %% Local Data Ingestion (Optional Input to Stage 2)
-    LocalData["Optional Local Data<br>(.csv, .xlsx, .pdf, .docx)"] -->|Parsed by DocumentIngestionTool| Stage2
-    
-    %% Web Search Ingestion (Fast vs Deep)
-    Stage1 -->|Topic Title| ModeSelect{Select Research Mode}
-    ModeSelect -->|Fast Mode| FastSearch["DuckDuckGo Web Search<br>(1x Comprehensive Query)"]
-    ModeSelect -->|Deep Mode| DeepSearch["DuckDuckGo Web Search<br>(3x Targeted Queries)"]
-    
+    LocalData -->|Parsed Local Context| Stage2
     FastSearch -->|Web Context| Stage2
     DeepSearch -->|Web Context| Stage2
-    
+
     %% Pipeline Progression
-    Stage2 -->|Unified Dossier & Metadata| Stage3[3. Customer Voice Agent]
+    Stage2 -->|Unified Hybrid Context| Stage3[3. Customer Voice Agent]
     Stage3 -->|Themed complaints, praises & requests| Stage4[4. Sentiment Agent]
     
     %% Analysis & Opportunity
