@@ -42,22 +42,25 @@ The system orchestrates a sequential pipeline of 9 specialized agents. Each agen
 
 ```mermaid
 graph TD
+    %% Inputs and Stage 1
     Input[Topic Query] --> Stage1[1. Briefing Agent]
-    Stage1 -->|Research Brief & slugified topic| ModeSelect{Select Research Mode}
     
-    %% Input Sources Branch (Ingests 4 possible data configurations)
-    Data["Internal Data Ingestion (.csv, .xlsx, .pdf, .docx)"] -->|Parsed by DocumentIngestionTool| ModeSelect
+    %% Stage 2 Inputs
+    Stage1 -->|Research Brief & Guidelines| Stage2[2. Research Agent]
     
-    %% Search Modes Branch (2 research modes: Fast vs. Deep)
-    ModeSelect -->|Fast Mode| Fast["Fast Mode: Data Ingestion + 1-way Web Search"]
-    ModeSelect -->|Deep Mode| Deep["Deep Mode: Data Ingestion + 3-way Web Search"]
+    %% Local Data Ingestion (Optional Input to Stage 2)
+    LocalData["Optional Local Data<br>(.csv, .xlsx, .pdf, .docx)"] -->|Parsed by DocumentIngestionTool| Stage2
     
-    %% Target Node: 1 Research Agent
-    Fast -->|Grounded Context| Stage2[2. Research Agent]
-    Deep -->|Grounded Context| Stage2
+    %% Web Search Ingestion (Fast vs Deep)
+    Stage1 -->|Topic Title| ModeSelect{Select Research Mode}
+    ModeSelect -->|Fast Mode| FastSearch["DuckDuckGo Web Search<br>(1x Comprehensive Query)"]
+    ModeSelect -->|Deep Mode| DeepSearch["DuckDuckGo Web Search<br>(3x Targeted Queries)"]
     
-    %% Research & Extraction
-    Stage2 -->|Raw Dossier & Metadata| Stage3[3. Customer Voice Agent]
+    FastSearch -->|Web Context| Stage2
+    DeepSearch -->|Web Context| Stage2
+    
+    %% Pipeline Progression
+    Stage2 -->|Unified Dossier & Metadata| Stage3[3. Customer Voice Agent]
     Stage3 -->|Themed complaints, praises & requests| Stage4[4. Sentiment Agent]
     
     %% Analysis & Opportunity
