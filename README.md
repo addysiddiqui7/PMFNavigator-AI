@@ -38,44 +38,39 @@ The **Multi-Agent Product-Market Fit (PMF) Research System** is an advanced, pro
 
 The system orchestrates a sequential pipeline of 9 specialized agents. Each agent acts as a discrete analytical node, processing the output of the preceding node to maintain strict chain-of-thought progression and prevent context dilution.
 
-![System Architecture Flowchart](system_architecture_flow_detailed.png)
-
 ```mermaid
 graph TD
-    %% Inputs and Stage 1
-    Input[Topic Query] --> Stage1[1. Briefing Agent]
-
-    subgraph Hybrid_Inputs [Hybrid Information Gathering]
-        direction LR
-        LocalData["Optional Local Data Feed<br>(CSV, XLSX, PDF, DOCX)"]
-        
-        %% Internet Web Search Path
-        ModeSelect{Select Web Search Mode<br>(Internet)}
-        ModeSelect -->|Fast Mode| FastSearch["DuckDuckGo Web Search<br>(1x Comprehensive Query)"]
-        ModeSelect -->|Deep Mode| DeepSearch["DuckDuckGo Web Search<br>(3x Targeted Queries)"]
-    end
-
-    Stage1 -->|Research Brief & Guidelines| Stage2[2. Research Agent]
-    Stage1 -->|Topic Title| ModeSelect
+    Input["Topic Query"] --> Stage1["1. Briefing Agent"]
     
-    LocalData -->|Parsed Local Context| Stage2
+    %% Parallel Grounding Inputs
+    Stage1 -->|Research Brief & Guidelines| Stage2["2. Research Agent"]
+    
+    %% Local Data Stream
+    LocalData["Optional Local Data Feed<br>(CSV, XLSX, PDF, DOCX)"] -->|Parsed Local Context| Stage2
+    
+    %% Internet Web Search Stream
+    Stage1 -->|Topic Title| ModeSelect{"Select Web Search Mode (Internet)"}
+    
+    ModeSelect -->|Fast Mode| FastSearch["DuckDuckGo Web Search<br>(1x Comprehensive Query)"]
+    ModeSelect -->|Deep Mode| DeepSearch["DuckDuckGo Web Search<br>(3x Targeted Queries)"]
+    
     FastSearch -->|Web Context| Stage2
     DeepSearch -->|Web Context| Stage2
-
-    %% Pipeline Progression
-    Stage2 -->|Unified Hybrid Context| Stage3[3. Customer Voice Agent]
-    Stage3 -->|Themed complaints, praises & requests| Stage4[4. Sentiment Agent]
+    
+    %% Pipeline Stages
+    Stage2 -->|Unified Hybrid Context| Stage3["3. Customer Voice Agent"]
+    Stage3 -->|Themed complaints, praises & requests| Stage4["4. Sentiment Agent"]
     
     %% Analysis & Opportunity
-    Stage4 -->|Satisfaction matrix & emotional distribution| Stage5[5. Market Gap Agent]
-    Stage5 -->|Gaps, severity scale & impact scale| Stage6[6. PMF Evaluation Agent]
+    Stage4 -->|Satisfaction matrix & emotional distribution| Stage5["5. Market Gap Agent"]
+    Stage5 -->|Gaps, severity scale & impact scale| Stage6["6. PMF Evaluation Agent"]
     
     %% Strategy & SWOT
-    Stage6 -->|PMF Score & Confidence Metrics| Stage7[7. Strategy Agent]
-    Stage7 -->|Roadmap & Actionable Items| Stage8[8. SWOT Analysis Agent]
+    Stage6 -->|PMF Score & Confidence Metrics| Stage7["7. Strategy Agent"]
+    Stage7 -->|Roadmap & Actionable Items| Stage8["8. SWOT Analysis Agent"]
     
     %% Report Output
-    Stage8 -->|SWOT Matrix & SO/WO/ST/WT Strategies| Stage9[9. Report Agent]
+    Stage8 -->|SWOT Matrix & SO/WO/ST/WT Strategies| Stage9["9. Report Agent"]
     Stage9 --> OutputFile["Timestamped Report (.md)"]
 ```
 
